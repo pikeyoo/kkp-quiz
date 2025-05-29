@@ -5,7 +5,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ordermanagement.order_management_system.model.CreateOrderRequest;
+import com.ordermanagement.order_management_system.model.CreateOrderResponse;
 
 @RestController
 public class OrderController {
@@ -15,8 +19,9 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<String> createOrder() {
-        return ResponseEntity.ok().body("Order created!");
+    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+        CreateOrderResponse createOrderResponse = new CreateOrderResponse();
+        return ResponseEntity.ok().body(createOrderResponse);
     }
 
     @GetMapping("/orders/{orderId}")
