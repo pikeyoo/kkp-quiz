@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateOrderResponse {
+public class UpdateStatusOrderResponse {
     @JsonProperty("order_id")
     private Integer orderId;
     private OrderStatus status;

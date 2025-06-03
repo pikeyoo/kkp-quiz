@@ -1,5 +1,7 @@
 package com.ordermanagement.order_management_system.model;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
@@ -11,5 +13,5 @@ public class OrderItem {
     @JsonProperty("product_name")
     private String productName;
     private Integer quantity;
-    private Double price;
+    private BigDecimal price;
 }
