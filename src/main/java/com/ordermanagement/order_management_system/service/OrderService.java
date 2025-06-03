@@ -1,12 +1,7 @@
 package com.ordermanagement.order_management_system.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +14,6 @@ import com.ordermanagement.order_management_system.entity.OrderItemEntity;
 import com.ordermanagement.order_management_system.enums.OrderStatus;
 import com.ordermanagement.order_management_system.mapper.OrderMapper;
 import com.ordermanagement.order_management_system.model.CreateOrderRequest;
-import com.ordermanagement.order_management_system.model.OrderItem;
 import com.ordermanagement.order_management_system.repository.OrderItemRepository;
 import com.ordermanagement.order_management_system.repository.OrderRepository;
 import com.ordermanagement.order_management_system.utils.CommonUtils;
