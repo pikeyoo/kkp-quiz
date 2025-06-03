@@ -24,6 +24,8 @@ public class OrderService {
   private OrderRepository orderRepository;
   @Autowired
   private OrderItemRepository orderItemRepository;
+  @Autowired
+  private CommonUtils commonUtils;
 
   public Long createOrder(CreateOrderRequest order) {
     OrderEntity orderEntity = new OrderEntity();
@@ -33,7 +35,7 @@ public class OrderService {
         .reduce(BigDecimal.ZERO, BigDecimal::add);
     orderEntity.setTotalAmount(totalAmount);
     orderEntity.setStatus(OrderStatus.created.toString());
-    orderEntity.setCreatedAt(CommonUtils.getCurrentDateTime());
+    orderEntity.setCreatedAt(commonUtils.getCurrentDateTime());
     OrderEntity iOrderEntity = orderRepository.save(orderEntity);
 
     order.getItems().stream().forEach(item -> {
@@ -62,7 +64,7 @@ public class OrderService {
     return orderRepository.findAll(pageable).map(OrderMapper::toDTO);
   }
 
-  public void updateOrderStatus(Integer orderId, OrderStatus status) {
-    orderRepository.updateStatusById(orderId, status.toString(), CommonUtils.getCurrentDateTime());
+  public void updateOrderStatus(Long orderId, OrderStatus status) {
+    orderRepository.updateStatusById(orderId, status.toString(), commonUtils.getCurrentDateTime());
   }
 }

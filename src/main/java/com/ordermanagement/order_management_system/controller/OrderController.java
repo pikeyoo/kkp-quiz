@@ -70,7 +70,7 @@ public class OrderController {
 
   @PutMapping("/{orderId}/status")
   public ResponseEntity<UpdateStatusOrderResponse> updateOrderStatus(
-      @PathVariable Integer orderId,
+      @PathVariable Long orderId,
       @RequestBody UpdateStatusOrderRequest orderStatus) {
     orderService.updateOrderStatus(orderId, orderStatus.getStatus());
 
