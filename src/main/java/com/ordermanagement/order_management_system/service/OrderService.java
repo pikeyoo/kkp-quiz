@@ -49,7 +49,7 @@ public class OrderService {
   }
 
   public OrderDTO getOrderById(Long orderId) {
-    OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
+    OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException());
 
     return new OrderDTO(orderEntity.getId(),
         orderEntity.getCustomerName(),
