@@ -10,6 +10,6 @@ import lombok.Setter;
 @Setter
 public class CreateOrderResponse {
     @JsonProperty("order_id")
-    private Integer orderId;
+    private Long orderId;
     private OrderStatus status;
 }

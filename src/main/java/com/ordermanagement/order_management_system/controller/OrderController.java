@@ -1,8 +1,6 @@
 package com.ordermanagement.order_management_system.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,11 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ordermanagement.order_management_system.entity.OrderEntity;
+import com.ordermanagement.order_management_system.dto.OrderDTO;
 import com.ordermanagement.order_management_system.enums.OrderStatus;
 import com.ordermanagement.order_management_system.model.CreateOrderRequest;
 import com.ordermanagement.order_management_system.model.CreateOrderResponse;
+import com.ordermanagement.order_management_system.model.GetOrderAllResponse;
 import com.ordermanagement.order_management_system.model.GetOrderResponse;
+import com.ordermanagement.order_management_system.model.OrderDetail;
+import com.ordermanagement.order_management_system.model.OrderItem;
 import com.ordermanagement.order_management_system.model.UpdateStatusOrderRequest;
 import com.ordermanagement.order_management_system.model.UpdateStatusOrderResponse;
 import com.ordermanagement.order_management_system.service.OrderService;
@@ -33,7 +34,7 @@ public class OrderController {
 
   @PostMapping
   public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest order) {
-    Integer orderId = orderService.createOrder(order);
+    Long orderId = orderService.createOrder(order);
 
     CreateOrderResponse createOrderResponse = new CreateOrderResponse();
     createOrderResponse.setOrderId(orderId);
@@ -42,19 +43,27 @@ public class OrderController {
   }
 
   @GetMapping
-  public Page<OrderEntity> getOrders(Pageable pageable) {
-    return orderService.getAllOrders(pageable);
+  public ResponseEntity<GetOrderAllResponse> getOrders(Pageable pageable) {
+    Page<OrderDTO> orderPage = orderService.getAllOrders(pageable);
 
-    // List<GetOrderResponse> orderResponses = new ArrayList<>();
-    // GetOrderResponse orderResponse = new GetOrderResponse();
-    // orderResponses.add(orderResponse);
-    // return ResponseEntity.ok().body(orderResponses);
+    GetOrderAllResponse orderAllResponses = new GetOrderAllResponse();
+    orderAllResponses.setOrders(
+      orderPage.getContent().stream().map(OrderDetail::toResponse).collect(Collectors.toList()));
+    orderAllResponses.setTotal(orderPage.getTotalElements());
+    return ResponseEntity.ok().body(orderAllResponses);
   }
 
   @GetMapping("/{orderId}")
-  public ResponseEntity<OrderEntity> getOrderById(@PathVariable Long orderId) {
-    OrderEntity order = orderService.getOrderById(orderId);
-    return ResponseEntity.ok().body(order);
+  public ResponseEntity<GetOrderResponse> getOrderById(@PathVariable Long orderId) {
+    OrderDTO order = orderService.getOrderById(orderId);
+
+    GetOrderResponse getOrderResponse = new GetOrderResponse();
+    getOrderResponse.setOrderId(order.getId());
+    getOrderResponse.setCustomerName(order.getCustomerName());
+    getOrderResponse.setTotalAmount(order.getTotalAmount());
+    getOrderResponse.setItems(
+        order.getOrderItems().stream().map(OrderItem::toResponse).collect(Collectors.toList()));
+    return ResponseEntity.ok().body(getOrderResponse);
   }
 
   @PutMapping("/{orderId}/status")

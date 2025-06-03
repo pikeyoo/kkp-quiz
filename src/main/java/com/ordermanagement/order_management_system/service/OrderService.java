@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +17,7 @@ import com.ordermanagement.order_management_system.dto.OrderDTO;
 import com.ordermanagement.order_management_system.entity.OrderEntity;
 import com.ordermanagement.order_management_system.entity.OrderItemEntity;
 import com.ordermanagement.order_management_system.enums.OrderStatus;
+import com.ordermanagement.order_management_system.mapper.OrderMapper;
 import com.ordermanagement.order_management_system.model.CreateOrderRequest;
 import com.ordermanagement.order_management_system.model.OrderItem;
 import com.ordermanagement.order_management_system.repository.OrderItemRepository;
@@ -27,7 +31,7 @@ public class OrderService {
   @Autowired
   private OrderItemRepository orderItemRepository;
 
-  public Integer createOrder(CreateOrderRequest order) {
+  public Long createOrder(CreateOrderRequest order) {
     OrderEntity orderEntity = new OrderEntity();
     orderEntity.setCustomerName(order.getCustomerName());
     BigDecimal totalAmount = order.getItems().stream()
@@ -50,12 +54,18 @@ public class OrderService {
     return iOrderEntity.getId();
   }
 
-  public OrderEntity getOrderById(Long orderId) {
-    return orderRepository.findById(orderId).orElse(null);
+  public OrderDTO getOrderById(Long orderId) {
+    OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
+
+    return new OrderDTO(orderEntity.getId(),
+        orderEntity.getCustomerName(),
+        orderEntity.getTotalAmount(),
+        orderEntity.getStatus(),
+        orderEntity.getOrderItems().stream().map(OrderMapper::toDTO).collect(Collectors.toList()));
   }
 
-  public Page<OrderEntity> getAllOrders(Pageable pageable) {
-    return orderRepository.findAll(pageable);
+  public Page<OrderDTO> getAllOrders(Pageable pageable) {
+    return orderRepository.findAll(pageable).map(OrderMapper::toDTO);
   }
 
   public void updateOrderStatus(Integer orderId, OrderStatus status) {
